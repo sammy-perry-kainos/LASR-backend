@@ -1,5 +1,6 @@
 package org.kainos.ea.db;
 
+import org.kainos.ea.cli.Client;
 import org.kainos.ea.cli.ClientSalesEmployee;
 
 import java.sql.Connection;
@@ -30,6 +31,25 @@ public class ClientDao {
         }
 
         return false;
+    }
+
+    public List<Client> getAllClients() throws SQLException{
+        Connection c = DatabaseConnector.getConnection();
+        Statement st = c.createStatement();
+        ArrayList<Client> clients = new ArrayList<Client>();
+
+        ResultSet rs = st.executeQuery("SELECT `ClientID`, `Name`, `Address`, `PhoneNumber` FROM Clients;");
+
+        while (rs.next()) {
+            clients.add(new Client(
+                    rs.getInt("ClientID"),
+                    rs.getString("Name"),
+                    rs.getString("Address"),
+                    rs.getString("PhoneNumber"))
+            );
+        }
+        System.out.println(clients);
+        return clients;
     }
 
     public List<ClientSalesEmployee> getAllClientSalesEmployees() throws SQLException {
