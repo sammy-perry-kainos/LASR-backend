@@ -1,12 +1,12 @@
 package org.kainos.ea.resources;
 
 import io.swagger.annotations.Api;
+import org.kainos.ea.api.AuthService;
 import org.kainos.ea.api.DeliveryService;
 import org.kainos.ea.cli.DeliveryRequest;
-import org.kainos.ea.client.DeliveryEmployeeDoesNotExistException;
-import org.kainos.ea.client.FailedToCreateDeliveryEmployeeeException;
-import org.kainos.ea.client.FailedToDeleteDeliveryEmployeeException;
-import org.kainos.ea.client.FailedToGetDeliveryEmployeeException;
+import org.kainos.ea.client.*;
+import org.kainos.ea.core.AuthValidator;
+import org.kainos.ea.db.AuthDao;
 import org.kainos.ea.db.DatabaseConnector;
 import org.kainos.ea.db.DeliveryDao;
 
@@ -20,12 +20,23 @@ import java.sql.SQLException;
 public class DeliveryController {
     private DeliveryService deliveryService = new DeliveryService(new DeliveryDao(new DatabaseConnector()));
 
+    private AuthService authService = new AuthService(new AuthDao(new DatabaseConnector()),
+            new AuthValidator(new AuthDao(new DatabaseConnector())));
 
     @POST
     @Path("/deliveryemployees")
     @Produces(MediaType.APPLICATION_JSON)
+    public Response createDeliveryEmployee(DeliveryRequest deliveryRequest, @QueryParam("token") String token) {
+        try {
+            if (!authService.isAdmin(token) && !authService.isHR(token)) {
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
+        } catch (TokenExpiredException e) {
+            return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
+        } catch (FailedToVerifyTokenException e) {
+            return Response.serverError().build();
+        }
 
-    public Response createDeliveryEmployee(DeliveryRequest deliveryRequest) {
         try {
             return Response.ok(deliveryService.createDeliveryEmployee(deliveryRequest)).build();
         } catch (FailedToCreateDeliveryEmployeeeException e) {
@@ -39,7 +50,17 @@ public class DeliveryController {
     @Path("/deliveryemployees/{id}")
     @Produces(MediaType.APPLICATION_JSON)
 
-    public Response updateDeliveryEmployee(@PathParam("id") int id, DeliveryRequest deliveryRequest) {
+    public Response updateDeliveryEmployee(@PathParam("id") int id, DeliveryRequest deliveryRequest, @QueryParam("token") String token) {
+        try {
+            if (!authService.isAdmin(token) && !authService.isHR(token)) {
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
+        } catch (TokenExpiredException e) {
+            return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
+        } catch (FailedToVerifyTokenException e) {
+            return Response.serverError().build();
+        }
+
         try {
             deliveryService.updateDeliveryEmployee(id, deliveryRequest);
             return Response.ok().build();
@@ -53,7 +74,17 @@ public class DeliveryController {
     @Path("/deliveryemployees/{id}")
     @Produces(MediaType.APPLICATION_JSON)
 
-    public Response getDeliveryEmployeeById(@PathParam("id") int id) {
+    public Response getDeliveryEmployeeById(@PathParam("id") int id, @QueryParam("token") String token) {
+        try {
+            if (!authService.isAdmin(token) && !authService.isHR(token)) {
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
+        } catch (TokenExpiredException e) {
+            return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
+        } catch (FailedToVerifyTokenException e) {
+            return Response.serverError().build();
+        }
+
         try {
             return Response.ok(deliveryService.getDeliveryEmployeeById(id)).build();
         } catch (FailedToGetDeliveryEmployeeException e) {
@@ -72,7 +103,17 @@ public class DeliveryController {
     @Path("/deliveryemployees")
     @Produces(MediaType.APPLICATION_JSON)
 
-    public Response getDeliveryEmployees() {
+    public Response getDeliveryEmployees(@QueryParam("token") String token) {
+        try {
+            if (!authService.isAdmin(token) && !authService.isHR(token)) {
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
+        } catch (TokenExpiredException e) {
+            return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
+        } catch (FailedToVerifyTokenException e) {
+            return Response.serverError().build();
+        }
+
         try {
             return Response.ok(deliveryService.getAllDeliveryEmployees()).build();
         } catch (FailedToGetDeliveryEmployeeException e) {
@@ -85,8 +126,17 @@ public class DeliveryController {
     @DELETE
     @Path("/deliveryemployees/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteDeliveryEmployee(@PathParam("id") int id, @QueryParam("token") String token) {
+        try {
+            if (!authService.isAdmin(token) && !authService.isHR(token)) {
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
+        } catch (TokenExpiredException e) {
+            return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
+        } catch (FailedToVerifyTokenException e) {
+            return Response.serverError().build();
+        }
 
-    public Response deleteDeliveryEmployee(@PathParam("id") int id) {
         try {
             deliveryService.deleteDeliveryEmployee(id);
 
