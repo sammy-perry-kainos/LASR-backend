@@ -36,7 +36,6 @@ public class DropwizardWebServiceApplication extends Application<DropwizardWebSe
     public void run(final DropwizardWebServiceConfiguration configuration,
                     final Environment environment) {
         environment.jersey().register(new DeliveryController());
-        // TODO: implement application
         environment.jersey().register(new SalesEmployeeController());
         environment.jersey().register(new ProjectController());
         environment.jersey().register(new DeliveryController());
@@ -44,6 +43,7 @@ public class DropwizardWebServiceApplication extends Application<DropwizardWebSe
         environment.jersey().register(new AuthController(new AuthService(
                 new AuthDao(new DatabaseConnector()),
                 new AuthValidator(new AuthDao(new DatabaseConnector())))));
+        environment.jersey().register(new DeliveryEmployeeProjectController());
     }
 
 }
