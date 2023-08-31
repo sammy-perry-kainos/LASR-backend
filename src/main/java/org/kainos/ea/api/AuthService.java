@@ -1,6 +1,7 @@
 package org.kainos.ea.api;
 
 import org.kainos.ea.cli.Login;
+import org.kainos.ea.cli.Role;
 import org.kainos.ea.cli.User;
 import org.kainos.ea.client.*;
 import org.kainos.ea.core.AuthValidator;
@@ -56,7 +57,7 @@ public class AuthService {
         try {
             int roleID = authDao.getRoleIDFromToken(token);
 
-            if (roleID == 1) {
+            if (Role.fromInteger(roleID) == Role.ADMIN) {
                 return true;
             }
         } catch (SQLException e) {
@@ -70,7 +71,7 @@ public class AuthService {
         try {
             int roleID = authDao.getRoleIDFromToken(token);
 
-            if (roleID == 2) {
+            if (Role.fromInteger(roleID) == Role.USER) {
                 return true;
             }
         } catch (SQLException e) {
@@ -84,7 +85,7 @@ public class AuthService {
         try {
             int roleID = authDao.getRoleIDFromToken(token);
 
-            if (roleID == 3) {
+            if (Role.fromInteger(roleID) == Role.HR) {
                 return true;
             }
         } catch (SQLException e) {
@@ -98,7 +99,7 @@ public class AuthService {
         try {
             int roleID = authDao.getRoleIDFromToken(token);
 
-            if (roleID == 4) {
+            if (Role.fromInteger(roleID) == Role.SALES) {
                 return true;
             }
         } catch (SQLException e) {
@@ -112,7 +113,7 @@ public class AuthService {
         try {
             int roleID = authDao.getRoleIDFromToken(token);
 
-            if (roleID == 5) {
+            if (Role.fromInteger(roleID) == Role.MANAGEMENT) {
                 return true;
             }
         } catch (SQLException e) {
