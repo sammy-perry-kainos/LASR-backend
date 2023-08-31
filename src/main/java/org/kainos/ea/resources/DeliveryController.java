@@ -85,7 +85,6 @@ public class DeliveryController {
     @DELETE
     @Path("/deliveryemployees/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-
     public Response deleteDeliveryEmployee(@PathParam("id") int id) {
         try {
             deliveryService.deleteDeliveryEmployee(id);
