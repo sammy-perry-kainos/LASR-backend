@@ -5,7 +5,7 @@ public enum Role {
     USER,
     HR,
     SALES,
-    MANAGEMENT
+    MANAGEMENT;
 
     public static Role fromInteger(int x) {
         switch(x) {
