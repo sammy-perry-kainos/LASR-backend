@@ -17,4 +17,16 @@ public class DeliveryEmployeeProjectsDAO {
 
         return st.executeUpdate();
     }
+
+    public void removeDeliveryEmployeeFromProject(int deliveryEmployeeId, int projectId) throws SQLException{
+        Connection c = DatabaseConnector.getConnection();
+
+        PreparedStatement st = c.prepareStatement("DELETE FROM`DeliveryEmployees_Projects` " +
+                "WHERE (`DeliveryEmployeeID` = ?) and (`ProjectID` = ?);");
+
+        st.setInt(1, deliveryEmployeeId);
+        st.setInt(2, projectId);
+
+        st.executeUpdate();
+    }
 }
