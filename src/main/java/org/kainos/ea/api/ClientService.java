@@ -1,6 +1,8 @@
 package org.kainos.ea.api;
 
+import org.kainos.ea.cli.Client;
 import org.kainos.ea.cli.ClientSalesEmployee;
+import org.kainos.ea.client.FailedToGetAllClientsException;
 import org.kainos.ea.client.FailedToGetClientException;
 import org.kainos.ea.db.ClientDao;
 
@@ -12,6 +14,14 @@ public class ClientService {
 
     public ClientService(ClientDao clientDao) {
         this.clientDao = clientDao;
+    }
+
+    public List<Client> getAllClients() throws FailedToGetAllClientsException{
+        try {
+            return clientDao.getAllClients();
+        } catch (SQLException e) {
+            throw new FailedToGetAllClientsException();
+        }
     }
 
     public List<ClientSalesEmployee> getAllClientSalesEmployees() throws FailedToGetClientException {
