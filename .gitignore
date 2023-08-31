@@ -99,3 +99,5 @@ db.properties
 .idea
 
 .DS_Store
+
+.sql/DS_Store
