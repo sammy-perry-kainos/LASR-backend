@@ -88,4 +88,22 @@ public class SalesEmployeeController {
         }
     }
 
+    @DELETE
+    @Path("/SalesEmployee/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteDeliveryEmployee(@PathParam("id") int id) {
+        try {
+            salesEmployeeService.deleteSalesEmployee(id);
+
+            return Response.ok().build();
+        } catch (SalesEmployeeDoesNotExistException e) {
+            System.err.println(e.getMessage());
+
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        } catch (FailedToDeleteSalesEmployeeException e) {
+            System.err.println(e.getMessage());
+
+            return Response.serverError().build();
+        }
+    }
 }
