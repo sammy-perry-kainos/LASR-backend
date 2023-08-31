@@ -49,7 +49,7 @@ public class AuthService {
         } catch (SQLException e) {
             System.err.println(e.getMessage());
 
-            throw new RuntimeException(e);
+            throw new FailedToCreateUserException();
         }
     }
 
