@@ -1,7 +1,11 @@
 package org.kainos.ea.resources;
 
 import io.swagger.annotations.Api;
+<<<<<<< HEAD
 import org.kainos.ea.api.AuthService;
+=======
+import org.kainos.ea.api.FailedToGetProjectException;
+>>>>>>> c1376be (Get all clients)
 import org.kainos.ea.api.ProjectService;
 import org.kainos.ea.cli.ProjectRequestAddClient;
 import org.kainos.ea.client.FailedToUpdateProjectException;
@@ -56,6 +60,18 @@ public class ProjectController {
             System.err.println(e.getMessage());
 
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("/projects")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getClients(){
+        try{
+            return Response.ok(projectService.getAllProjects()).build();
+        } catch (FailedToGetProjectException e){
+            System.out.println(e.getMessage());
+            return Response.serverError().build();
         }
     }
 }
