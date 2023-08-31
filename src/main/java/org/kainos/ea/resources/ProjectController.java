@@ -1,19 +1,21 @@
 package org.kainos.ea.resources;
 
 import io.swagger.annotations.Api;
+import org.kainos.ea.api.AuthService;
 import org.kainos.ea.api.ProjectService;
 import org.kainos.ea.cli.ProjectRequestAddClient;
 import org.kainos.ea.client.FailedToUpdateProjectException;
+import org.kainos.ea.client.FailedToVerifyTokenException;
 import org.kainos.ea.client.InvalidProjectException;
+import org.kainos.ea.client.TokenExpiredException;
+import org.kainos.ea.core.AuthValidator;
 import org.kainos.ea.core.ProjectValidator;
+import org.kainos.ea.db.AuthDao;
 import org.kainos.ea.db.ClientDao;
 import org.kainos.ea.db.DatabaseConnector;
 import org.kainos.ea.db.ProjectDao;
 
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -23,11 +25,25 @@ public class ProjectController {
     private ProjectService projectService = new ProjectService(new ProjectDao(new DatabaseConnector()),
             new ProjectValidator(new ClientDao(new DatabaseConnector()), new ProjectDao(new DatabaseConnector())));
 
+    private AuthService authService = new AuthService(new AuthDao(new DatabaseConnector()),
+            new AuthValidator(new AuthDao(new DatabaseConnector())));
+
     @PUT
     @Path("/project/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response addClientToProject(@PathParam("id") int id,
-                                       ProjectRequestAddClient project) {
+                                       ProjectRequestAddClient project,
+                                       @QueryParam("token") String token) {
+        try {
+            if (!authService.isAdmin(token) && !authService.isSales(token)) {
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
+        } catch (TokenExpiredException e) {
+            return Response.status(Response.Status.FORBIDDEN).entity(e.getMessage()).build();
+        } catch (FailedToVerifyTokenException e) {
+            return Response.serverError().build();
+        }
+
         try {
             projectService.addClientToProject(id, project);
 
